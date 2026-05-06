@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="https://jakarta.ee/xml/ns/persistence" version="3.0">
+
+    <persistence-unit name="WalletPU" transaction-type="JTA">
+
+        <!-- Tell JPA about our Wallet entity -->
+        <class>com.marketplace.walletservice.entities.Wallet</class>
+
+        <properties>
+            <!-- Connect to walletdb — different database from usersdb! -->
+            <property name="jakarta.persistence.jdbc.url"
+                      value="jdbc:mysql://localhost:3306/walletdb"/>
+
+            <property name="jakarta.persistence.jdbc.user" value="root"/>
+            <property name="jakarta.persistence.jdbc.password" value="root"/>
+
+            <property name="jakarta.persistence.jdbc.driver"
+                      value="com.mysql.cj.jdbc.Driver"/>
+
+            <!-- Auto create/update the wallets table -->
+            <property name="hibernate.hbm2ddl.auto" value="update"/>
+
+            <!-- Show SQL in console for learning -->
+            <property name="hibernate.show_sql" value="true"/>
+        </properties>
+
+    </persistence-unit>
+
+</persistence>
