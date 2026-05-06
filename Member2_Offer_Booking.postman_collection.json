@@ -1,0 +1,222 @@
+{
+  "info": {
+    "name": "Member 2 — Offer & Booking Service",
+    "_postman_id": "m2-homehub-collection",
+    "description": "Postman collection for Offer Service (port 8083) and Booking Service (port 8084). Run RabbitMQ and both Spring Boot services before testing.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "offer_url",   "value": "http://localhost:8083" },
+    { "key": "booking_url", "value": "http://localhost:8084" }
+  ],
+  "item": [
+    {
+      "name": "Offer Service",
+      "item": [
+        {
+          "name": "Categories",
+          "item": [
+            {
+              "name": "GET all categories",
+              "request": {
+                "method": "GET",
+                "url": "{{offer_url}}/api/offers/categories",
+                "description": "Returns all seeded service categories"
+              }
+            },
+            {
+              "name": "POST add category (Admin)",
+              "request": {
+                "method": "POST",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "url": "{{offer_url}}/api/offers/categories",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Gardening\"\n}"
+                },
+                "description": "Admin adds a new service category. Returns 409 if already exists."
+              }
+            }
+          ]
+        },
+        {
+          "name": "Listings",
+          "item": [
+            {
+              "name": "POST create listing (Provider)",
+              "request": {
+                "method": "POST",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "url": "{{offer_url}}/api/offers",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"providerId\": 2,\n  \"categoryId\": 1,\n  \"price\": 80.00,\n  \"availableDate\": \"2026-06-15T09:00:00\",\n  \"notes\": \"Full pipe repair and leak fix\"\n}"
+                },
+                "description": "Provider posts a new service listing. categoryId must exist."
+              }
+            },
+            {
+              "name": "GET browse all open listings",
+              "request": {
+                "method": "GET",
+                "url": "{{offer_url}}/api/offers",
+                "description": "Returns all OPEN listings (no category filter)"
+              }
+            },
+            {
+              "name": "GET browse by category",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{offer_url}}/api/offers?categoryId=1",
+                  "query": [{ "key": "categoryId", "value": "1" }]
+                },
+                "description": "Returns OPEN listings filtered by categoryId"
+              }
+            },
+            {
+              "name": "GET single listing",
+              "request": {
+                "method": "GET",
+                "url": "{{offer_url}}/api/offers/1",
+                "description": "Fetch a specific listing by offerId. Booking Service uses this."
+              }
+            },
+            {
+              "name": "PATCH update listing (Provider)",
+              "request": {
+                "method": "PATCH",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "url": "{{offer_url}}/api/offers/1",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"price\": 90.00,\n  \"availableDate\": \"2026-06-20T10:00:00\",\n  \"notes\": \"Updated: emergency repairs only\"\n}"
+                },
+                "description": "Provider updates price, date or notes. Returns 404 if not found, or if already BOOKED."
+              }
+            },
+            {
+              "name": "PATCH mark listing complete (Booking Svc internal)",
+              "request": {
+                "method": "PATCH",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "url": "{{offer_url}}/api/offers/1/complete",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"customerId\": 1,\n  \"bookingId\": 1\n}"
+                },
+                "description": "Called by Booking Service after payment succeeds. Marks listing BOOKED."
+              }
+            },
+            {
+              "name": "GET provider all listings",
+              "request": {
+                "method": "GET",
+                "url": "{{offer_url}}/api/offers/provider/2",
+                "description": "All listings (OPEN + BOOKED) created by this provider"
+              }
+            },
+            {
+              "name": "GET provider completed (booked) listings",
+              "request": {
+                "method": "GET",
+                "url": "{{offer_url}}/api/offers/provider/2/completed",
+                "description": "Only the BOOKED listings — shows completed services with customer info"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Team-of-3: Match & Accept",
+          "item": [
+            {
+              "name": "POST customer request match",
+              "request": {
+                "method": "POST",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "url": "{{offer_url}}/api/offers/match",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"customerId\": 1,\n  \"categoryId\": 1,\n  \"maxPrice\": 100.00,\n  \"requiredDate\": \"2026-06-15T09:00:00\"\n}"
+                },
+                "description": "Customer posts a service request. System matches to cheapest OPEN listing on that date. Fires RabbitMQ alert to the provider."
+              }
+            },
+            {
+              "name": "POST provider accepts matched request",
+              "request": {
+                "method": "POST",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "url": {
+                  "raw": "{{offer_url}}/api/offers/1/accept?customerId=1",
+                  "query": [{ "key": "customerId", "value": "1" }]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"providerId\": 2\n}"
+                },
+                "description": "Provider accepts the matched request. Calls Booking Service → triggers full booking flow."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Booking Service",
+      "item": [
+        {
+          "name": "POST create booking (Customer)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{booking_url}}/api/bookings",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customerId\": 1,\n  \"offerId\": 1\n}"
+            },
+            "description": "Customer books a service. Orchestrates: offer validation → wallet check → deduct → mark booked → RabbitMQ event. Returns 201 on success, 402 on low balance, 409 if offer taken."
+          }
+        },
+        {
+          "name": "GET booking history by customer",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{booking_url}}/api/bookings?customerId=1",
+              "query": [{ "key": "customerId", "value": "1" }]
+            },
+            "description": "Customer booking history — confirmed and rejected"
+          }
+        },
+        {
+          "name": "GET booking history by provider",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{booking_url}}/api/bookings?providerId=2",
+              "query": [{ "key": "providerId", "value": "2" }]
+            },
+            "description": "Provider sees which of their listings were booked"
+          }
+        },
+        {
+          "name": "GET all bookings (Admin)",
+          "request": {
+            "method": "GET",
+            "url": "{{booking_url}}/api/bookings/all",
+            "description": "Admin view — all bookings across all users, newest first"
+          }
+        },
+        {
+          "name": "GET single booking",
+          "request": {
+            "method": "GET",
+            "url": "{{booking_url}}/api/bookings/1",
+            "description": "Fetch one booking by ID. Used by Notification Service and Admin Service."
+          }
+        }
+      ]
+    }
+  ]
+}
