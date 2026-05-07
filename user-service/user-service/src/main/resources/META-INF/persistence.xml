@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="https://jakarta.ee/xml/ns/persistence" version="3.0">
+
+    <!--
+        A "persistence-unit" = one database connection configuration.
+        name="UsersPU" is what we'll reference in our Java code.
+    -->
+    <persistence-unit name="UsersPU" transaction-type="JTA">
+
+        <!-- Tell JPA about our User entity class -->
+        <class>com.marketplace.userservice.entities.User</class>
+
+        <properties>
+            <!-- Which database to connect to -->
+            <property name="jakarta.persistence.jdbc.url"
+                      value="jdbc:mysql://localhost:3306/usersdb"/>
+
+            <!-- MySQL login -->
+            <property name="jakarta.persistence.jdbc.user" value="root"/>
+            <property name="jakarta.persistence.jdbc.password" value="basmala.12347890"/>
+
+            <!-- MySQL driver class -->
+            <property name="jakarta.persistence.jdbc.driver"
+                      value="com.mysql.cj.jdbc.Driver"/>
+
+            <!--
+                update = JPA will automatically create/update
+                the "users" table in MySQL for us.
+                We never need to write CREATE TABLE SQL manually!
+            -->
+            <property name="hibernate.hbm2ddl.auto" value="update"/>
+
+            <!-- Shows the SQL JPA runs in the JBoss console (helpful for learning) -->
+            <property name="hibernate.show_sql" value="true"/>
+        </properties>
+
+    </persistence-unit>
+
+</persistence>

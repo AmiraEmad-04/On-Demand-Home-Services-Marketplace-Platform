@@ -2,12 +2,12 @@
   "info": {
     "name": "Member 2 — Offer & Booking Service",
     "_postman_id": "m2-homehub-collection",
-    "description": "Postman collection for Offer Service (port 8083) and Booking Service (port 8084). Run RabbitMQ and both Spring Boot services before testing.",
+    "description": "Postman collection for Offer Service (port 8083) and Booking Service (port 8084).\n\nIMPORTANT: Delete any existing 'DS Ass' environment (or clear its values) so the collection-level variables below take effect:\n  offer_url   = http://localhost:8083\n  booking_url = http://localhost:8084",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
-    { "key": "offer_url",   "value": "http://localhost:8083" },
-    { "key": "booking_url", "value": "http://localhost:8084" }
+    { "key": "offer_url",   "value": "http://localhost:8083", "type": "string" },
+    { "key": "booking_url", "value": "http://localhost:8084", "type": "string" }
   ],
   "item": [
     {
@@ -20,8 +20,13 @@
               "name": "GET all categories",
               "request": {
                 "method": "GET",
-                "url": "{{offer_url}}/api/offers/categories",
-                "description": "Returns all seeded service categories"
+                "header": [],
+                "url": {
+                  "raw": "{{offer_url}}/api/offers/categories",
+                  "host": ["{{offer_url}}"],
+                  "path": ["api", "offers", "categories"]
+                },
+                "description": "Returns all seeded service categories (Plumbing, Carpentry, Electrical, Cleaning, Painting)"
               }
             },
             {
@@ -29,12 +34,17 @@
               "request": {
                 "method": "POST",
                 "header": [{ "key": "Content-Type", "value": "application/json" }],
-                "url": "{{offer_url}}/api/offers/categories",
+                "url": {
+                  "raw": "{{offer_url}}/api/offers/categories",
+                  "host": ["{{offer_url}}"],
+                  "path": ["api", "offers", "categories"]
+                },
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"name\": \"Gardening\"\n}"
+                  "raw": "{\n  \"name\": \"Gardening\"\n}",
+                  "options": { "raw": { "language": "json" } }
                 },
-                "description": "Admin adds a new service category. Returns 409 if already exists."
+                "description": "Admin adds a new service category. Returns 409 Conflict if name already exists."
               }
             }
           ]
@@ -47,19 +57,29 @@
               "request": {
                 "method": "POST",
                 "header": [{ "key": "Content-Type", "value": "application/json" }],
-                "url": "{{offer_url}}/api/offers",
+                "url": {
+                  "raw": "{{offer_url}}/api/offers",
+                  "host": ["{{offer_url}}"],
+                  "path": ["api", "offers"]
+                },
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"providerId\": 2,\n  \"categoryId\": 1,\n  \"price\": 80.00,\n  \"availableDate\": \"2026-06-15T09:00:00\",\n  \"notes\": \"Full pipe repair and leak fix\"\n}"
+                  "raw": "{\n  \"providerId\": 2,\n  \"categoryId\": 1,\n  \"price\": 80.00,\n  \"availableDate\": \"2026-06-15T09:00:00\",\n  \"notes\": \"Full pipe repair and leak fix\"\n}",
+                  "options": { "raw": { "language": "json" } }
                 },
-                "description": "Provider posts a new service listing. categoryId must exist."
+                "description": "Provider posts a new OPEN service listing. categoryId must exist (use GET categories first). Returns 201 with the new offerId — use that offerId in POST create booking."
               }
             },
             {
               "name": "GET browse all open listings",
               "request": {
                 "method": "GET",
-                "url": "{{offer_url}}/api/offers",
+                "header": [],
+                "url": {
+                  "raw": "{{offer_url}}/api/offers",
+                  "host": ["{{offer_url}}"],
+                  "path": ["api", "offers"]
+                },
                 "description": "Returns all OPEN listings (no category filter)"
               }
             },
@@ -67,19 +87,27 @@
               "name": "GET browse by category",
               "request": {
                 "method": "GET",
+                "header": [],
                 "url": {
                   "raw": "{{offer_url}}/api/offers?categoryId=1",
+                  "host": ["{{offer_url}}"],
+                  "path": ["api", "offers"],
                   "query": [{ "key": "categoryId", "value": "1" }]
                 },
-                "description": "Returns OPEN listings filtered by categoryId"
+                "description": "Returns OPEN listings filtered by categoryId. Change categoryId value as needed."
               }
             },
             {
               "name": "GET single listing",
               "request": {
                 "method": "GET",
-                "url": "{{offer_url}}/api/offers/1",
-                "description": "Fetch a specific listing by offerId. Booking Service uses this."
+                "header": [],
+                "url": {
+                  "raw": "{{offer_url}}/api/offers/1",
+                  "host": ["{{offer_url}}"],
+                  "path": ["api", "offers", "1"]
+                },
+                "description": "Fetch one listing by offerId. Change the last path segment to the desired ID."
               }
             },
             {
@@ -87,12 +115,17 @@
               "request": {
                 "method": "PATCH",
                 "header": [{ "key": "Content-Type", "value": "application/json" }],
-                "url": "{{offer_url}}/api/offers/1",
+                "url": {
+                  "raw": "{{offer_url}}/api/offers/1",
+                  "host": ["{{offer_url}}"],
+                  "path": ["api", "offers", "1"]
+                },
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"price\": 90.00,\n  \"availableDate\": \"2026-06-20T10:00:00\",\n  \"notes\": \"Updated: emergency repairs only\"\n}"
+                  "raw": "{\n  \"price\": 90.00,\n  \"availableDate\": \"2026-06-20T10:00:00\",\n  \"notes\": \"Updated: emergency repairs only\"\n}",
+                  "options": { "raw": { "language": "json" } }
                 },
-                "description": "Provider updates price, date or notes. Returns 404 if not found, or if already BOOKED."
+                "description": "Provider updates price, date or notes. Returns 404 if listing not found OR already BOOKED. Change the offerId in the URL to an OPEN listing."
               }
             },
             {
@@ -100,28 +133,43 @@
               "request": {
                 "method": "PATCH",
                 "header": [{ "key": "Content-Type", "value": "application/json" }],
-                "url": "{{offer_url}}/api/offers/1/complete",
+                "url": {
+                  "raw": "{{offer_url}}/api/offers/1/complete",
+                  "host": ["{{offer_url}}"],
+                  "path": ["api", "offers", "1", "complete"]
+                },
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"customerId\": 1,\n  \"bookingId\": 1\n}"
+                  "raw": "{\n  \"customerId\": 1,\n  \"bookingId\": 1\n}",
+                  "options": { "raw": { "language": "json" } }
                 },
-                "description": "Called by Booking Service after payment succeeds. Marks listing BOOKED."
+                "description": "Called internally by Booking Service. Marks listing BOOKED. Can also test manually."
               }
             },
             {
               "name": "GET provider all listings",
               "request": {
                 "method": "GET",
-                "url": "{{offer_url}}/api/offers/provider/2",
-                "description": "All listings (OPEN + BOOKED) created by this provider"
+                "header": [],
+                "url": {
+                  "raw": "{{offer_url}}/api/offers/provider/2",
+                  "host": ["{{offer_url}}"],
+                  "path": ["api", "offers", "provider", "2"]
+                },
+                "description": "All listings (OPEN + BOOKED) created by provider with ID 2. Change last segment to desired providerId."
               }
             },
             {
               "name": "GET provider completed (booked) listings",
               "request": {
                 "method": "GET",
-                "url": "{{offer_url}}/api/offers/provider/2/completed",
-                "description": "Only the BOOKED listings — shows completed services with customer info"
+                "header": [],
+                "url": {
+                  "raw": "{{offer_url}}/api/offers/provider/2/completed",
+                  "host": ["{{offer_url}}"],
+                  "path": ["api", "offers", "provider", "2", "completed"]
+                },
+                "description": "Only BOOKED listings for this provider — completed services with customer info."
               }
             }
           ]
@@ -134,12 +182,17 @@
               "request": {
                 "method": "POST",
                 "header": [{ "key": "Content-Type", "value": "application/json" }],
-                "url": "{{offer_url}}/api/offers/match",
+                "url": {
+                  "raw": "{{offer_url}}/api/offers/match",
+                  "host": ["{{offer_url}}"],
+                  "path": ["api", "offers", "match"]
+                },
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"customerId\": 1,\n  \"categoryId\": 1,\n  \"maxPrice\": 100.00,\n  \"requiredDate\": \"2026-06-15T09:00:00\"\n}"
+                  "raw": "{\n  \"customerId\": 1,\n  \"categoryId\": 1,\n  \"maxPrice\": 100.00,\n  \"requiredDate\": \"2026-06-15T09:00:00\"\n}",
+                  "options": { "raw": { "language": "json" } }
                 },
-                "description": "Customer posts a service request. System matches to cheapest OPEN listing on that date. Fires RabbitMQ alert to the provider."
+                "description": "Customer posts a service request. System finds the cheapest OPEN listing on that date. Fires RabbitMQ alert to the matched provider."
               }
             },
             {
@@ -149,11 +202,14 @@
                 "header": [{ "key": "Content-Type", "value": "application/json" }],
                 "url": {
                   "raw": "{{offer_url}}/api/offers/1/accept?customerId=1",
+                  "host": ["{{offer_url}}"],
+                  "path": ["api", "offers", "1", "accept"],
                   "query": [{ "key": "customerId", "value": "1" }]
                 },
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"providerId\": 2\n}"
+                  "raw": "{\n  \"providerId\": 2\n}",
+                  "options": { "raw": { "language": "json" } }
                 },
                 "description": "Provider accepts the matched request. Calls Booking Service → triggers full booking flow."
               }
@@ -170,50 +226,71 @@
           "request": {
             "method": "POST",
             "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "url": "{{booking_url}}/api/bookings",
+            "url": {
+              "raw": "{{booking_url}}/api/bookings",
+              "host": ["{{booking_url}}"],
+              "path": ["api", "bookings"]
+            },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"customerId\": 1,\n  \"offerId\": 1\n}"
+              "raw": "{\n  \"customerId\": 1,\n  \"offerId\": 1\n}",
+              "options": { "raw": { "language": "json" } }
             },
-            "description": "Customer books a service. Orchestrates: offer validation → wallet check → deduct → mark booked → RabbitMQ event. Returns 201 on success, 402 on low balance, 409 if offer taken."
+            "description": "Customer books a service. IMPORTANT: offerId must be a freshly created OPEN offer. Returns 201 on success, 402 if balance too low, 409 if offer already BOOKED, 502 if wallet service (M1) is unreachable."
           }
         },
         {
           "name": "GET booking history by customer",
           "request": {
             "method": "GET",
+            "header": [],
             "url": {
               "raw": "{{booking_url}}/api/bookings?customerId=1",
+              "host": ["{{booking_url}}"],
+              "path": ["api", "bookings"],
               "query": [{ "key": "customerId", "value": "1" }]
             },
-            "description": "Customer booking history — confirmed and rejected"
+            "description": "Returns all bookings for customerId=1. Change query param value as needed."
           }
         },
         {
           "name": "GET booking history by provider",
           "request": {
             "method": "GET",
+            "header": [],
             "url": {
               "raw": "{{booking_url}}/api/bookings?providerId=2",
+              "host": ["{{booking_url}}"],
+              "path": ["api", "bookings"],
               "query": [{ "key": "providerId", "value": "2" }]
             },
-            "description": "Provider sees which of their listings were booked"
+            "description": "Returns all bookings where this provider's listings were booked."
           }
         },
         {
           "name": "GET all bookings (Admin)",
           "request": {
             "method": "GET",
-            "url": "{{booking_url}}/api/bookings/all",
-            "description": "Admin view — all bookings across all users, newest first"
+            "header": [],
+            "url": {
+              "raw": "{{booking_url}}/api/bookings/all",
+              "host": ["{{booking_url}}"],
+              "path": ["api", "bookings", "all"]
+            },
+            "description": "Admin view — all bookings across all users, newest first."
           }
         },
         {
           "name": "GET single booking",
           "request": {
             "method": "GET",
-            "url": "{{booking_url}}/api/bookings/1",
-            "description": "Fetch one booking by ID. Used by Notification Service and Admin Service."
+            "header": [],
+            "url": {
+              "raw": "{{booking_url}}/api/bookings/1",
+              "host": ["{{booking_url}}"],
+              "path": ["api", "bookings", "1"]
+            },
+            "description": "Fetch one booking by bookingId. Change the last path segment to desired ID."
           }
         }
       ]
