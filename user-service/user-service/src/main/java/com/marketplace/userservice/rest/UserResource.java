@@ -73,8 +73,8 @@ public class UserResource {
      */
     private void createWalletForUser(Long userId, double initialBalance) {
         try {
-            // Wallet Service runs on port 8082
-            URL url = new URL("http://localhost:8082/wallet-service/api/wallet/"
+            // Wallet Service runs on port 8081
+            URL url = new URL("http://localhost:8081/wallet-service/api/wallet/"
                     + userId + "/create");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");

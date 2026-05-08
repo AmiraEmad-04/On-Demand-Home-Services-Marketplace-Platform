@@ -1,0 +1,380 @@
+{
+	"info": {
+		"_postman_id": "m3-admin-notification-gateway",
+		"name": "Member 3 — Admin, Notification & Gateway",
+		"description": "Postman collection for Member 3 services: Admin Service, Notification Service, and API Gateway",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Admin Service (Direct)",
+			"item": [
+				{
+					"name": "View All Users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ADMIN_URL}}/api/admin/users",
+							"host": ["{{ADMIN_URL}}"],
+							"path": ["api", "admin", "users"]
+						}
+					}
+				},
+				{
+					"name": "View All Bookings",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ADMIN_URL}}/api/admin/bookings",
+							"host": ["{{ADMIN_URL}}"],
+							"path": ["api", "admin", "bookings"]
+						}
+					}
+				},
+				{
+					"name": "View All Categories",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ADMIN_URL}}/api/admin/categories",
+							"host": ["{{ADMIN_URL}}"],
+							"path": ["api", "admin", "categories"]
+						}
+					}
+				},
+				{
+					"name": "Add Service Category",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Gardening\"\n}"
+						},
+						"url": {
+							"raw": "{{ADMIN_URL}}/api/admin/categories",
+							"host": ["{{ADMIN_URL}}"],
+							"path": ["api", "admin", "categories"]
+						}
+					}
+				},
+				{
+					"name": "View Payment Failure Alerts",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ADMIN_URL}}/api/admin/alerts",
+							"host": ["{{ADMIN_URL}}"],
+							"path": ["api", "admin", "alerts"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Notification Service (Direct)",
+			"item": [
+				{
+					"name": "Get Notifications for User",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{NOTIFICATION_URL}}/api/notifications/{{USER_ID}}",
+							"host": ["{{NOTIFICATION_URL}}"],
+							"path": ["api", "notifications", "{{USER_ID}}"]
+						}
+					}
+				},
+				{
+					"name": "Get All Notifications (Admin)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{NOTIFICATION_URL}}/api/notifications",
+							"host": ["{{NOTIFICATION_URL}}"],
+							"path": ["api", "notifications"]
+						}
+					}
+				},
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{NOTIFICATION_URL}}/api/notifications/health",
+							"host": ["{{NOTIFICATION_URL}}"],
+							"path": ["api", "notifications", "health"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "API Gateway (All Services)",
+			"item": [
+				{
+					"name": "Gateway Health",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{GATEWAY_URL}}/actuator/health",
+							"host": ["{{GATEWAY_URL}}"],
+							"path": ["actuator", "health"]
+						}
+					}
+				},
+				{
+					"name": "User - Register (via Gateway)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"customer1\",\n  \"password\": \"pass123\",\n  \"role\": \"CUSTOMER\",\n  \"initialBalance\": 500.0\n}"
+						},
+						"url": {
+							"raw": "{{GATEWAY_URL}}/users/register",
+							"host": ["{{GATEWAY_URL}}"],
+							"path": ["users", "register"]
+						}
+					}
+				},
+				{
+					"name": "User - Login (via Gateway)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"customer1\",\n  \"password\": \"pass123\"\n}"
+						},
+						"url": {
+							"raw": "{{GATEWAY_URL}}/users/login",
+							"host": ["{{GATEWAY_URL}}"],
+							"path": ["users", "login"]
+						}
+					}
+				},
+				{
+					"name": "Wallet - Get Balance (via Gateway)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{GATEWAY_URL}}/wallet/{{USER_ID}}/balance",
+							"host": ["{{GATEWAY_URL}}"],
+							"path": ["wallet", "{{USER_ID}}", "balance"]
+						}
+					}
+				},
+				{
+					"name": "Wallet - Top Up (via Gateway)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"amount\": 200.0\n}"
+						},
+						"url": {
+							"raw": "{{GATEWAY_URL}}/wallet/{{USER_ID}}/topup",
+							"host": ["{{GATEWAY_URL}}"],
+							"path": ["wallet", "{{USER_ID}}", "topup"]
+						}
+					}
+				},
+				{
+					"name": "Offers - Browse (via Gateway)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{GATEWAY_URL}}/offers",
+							"host": ["{{GATEWAY_URL}}"],
+							"path": ["offers"]
+						}
+					}
+				},
+				{
+					"name": "Offers - Create (via Gateway)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"providerId\": 2,\n  \"categoryId\": 1,\n  \"price\": 120.0,\n  \"availableDate\": \"2026-06-20T10:00:00\",\n  \"notes\": \"Expert plumbing service\"\n}"
+						},
+						"url": {
+							"raw": "{{GATEWAY_URL}}/offers",
+							"host": ["{{GATEWAY_URL}}"],
+							"path": ["offers"]
+						}
+					}
+				},
+				{
+					"name": "Bookings - Create (via Gateway)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"customerId\": 1,\n  \"offerId\": 1\n}"
+						},
+						"url": {
+							"raw": "{{GATEWAY_URL}}/bookings",
+							"host": ["{{GATEWAY_URL}}"],
+							"path": ["bookings"]
+						}
+					}
+				},
+				{
+					"name": "Bookings - Customer History (via Gateway)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{GATEWAY_URL}}/bookings?customerId={{USER_ID}}",
+							"host": ["{{GATEWAY_URL}}"],
+							"path": ["bookings"],
+							"query": [
+								{
+									"key": "customerId",
+									"value": "{{USER_ID}}"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Admin - View All Users (via Gateway)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{GATEWAY_URL}}/admin/users",
+							"host": ["{{GATEWAY_URL}}"],
+							"path": ["admin", "users"]
+						}
+					}
+				},
+				{
+					"name": "Admin - View All Bookings (via Gateway)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{GATEWAY_URL}}/admin/bookings",
+							"host": ["{{GATEWAY_URL}}"],
+							"path": ["admin", "bookings"]
+						}
+					}
+				},
+				{
+					"name": "Admin - Add Category (via Gateway)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Landscaping\"\n}"
+						},
+						"url": {
+							"raw": "{{GATEWAY_URL}}/admin/categories",
+							"host": ["{{GATEWAY_URL}}"],
+							"path": ["admin", "categories"]
+						}
+					}
+				},
+				{
+					"name": "Admin - Payment Alerts (via Gateway)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{GATEWAY_URL}}/admin/alerts",
+							"host": ["{{GATEWAY_URL}}"],
+							"path": ["admin", "alerts"]
+						}
+					}
+				},
+				{
+					"name": "Notifications - Get User Notifications (via Gateway)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{GATEWAY_URL}}/notifications/{{USER_ID}}",
+							"host": ["{{GATEWAY_URL}}"],
+							"path": ["notifications", "{{USER_ID}}"]
+						}
+					}
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "GATEWAY_URL",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "ADMIN_URL",
+			"value": "http://localhost:8085",
+			"type": "string"
+		},
+		{
+			"key": "NOTIFICATION_URL",
+			"value": "http://localhost:8086",
+			"type": "string"
+		},
+		{
+			"key": "USER_ID",
+			"value": "1",
+			"type": "string"
+		}
+	]
+}

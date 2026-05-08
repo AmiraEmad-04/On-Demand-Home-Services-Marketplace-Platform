@@ -11,7 +11,7 @@ import java.util.Map;
 /*
  * All endpoints start with /wallet
  * Full URL example:
- * http://localhost:8082/wallet-service/api/wallet/1/balance
+ * http://localhost:8081/wallet-service/api/wallet/1/balance
  */
 @Path("/wallet")
 @Produces(MediaType.APPLICATION_JSON)
@@ -97,7 +97,7 @@ public class WalletResource {
     // Body: { "amount": 80.00 }
     // Called by Booking Service (M2)
     // ==========================================
-    @PATCH
+    @POST
     @Path("/{userId}/deduct")
     public Response deduct(@PathParam("userId") Long userId,
                            Map<String, Double> body) {

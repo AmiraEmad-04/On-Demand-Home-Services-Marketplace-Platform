@@ -149,51 +149,55 @@ public class ReservationOrchestrator {
      */
     private String deductFromWallet(Long customerId, Double amount) {
         String url = walletServiceUrl + "/wallet-service/api/wallet/" + customerId + "/deduct";
-        System.out.println("[BookingService] Calling: PATCH " + url + " amount=" + amount);
+        System.out.println("🔄 [Booking] POST deduct → " + url + " amount=" + amount);
+
         try {
             Map<String, Object> body = new HashMap<>();
             body.put("amount", amount);
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
-            HttpEntity<Map<String, Object>> req = new HttpEntity<>(body, headers);
+            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
 
-            ResponseEntity<Map> resp = http.exchange(url, HttpMethod.PATCH, req, Map.class);
-            System.out.println("[BookingService] Deduct response: " + resp.getStatusCode());
-            if (resp.getStatusCode().is2xxSuccessful()) {
-                return null; // success
+            ResponseEntity<Map> response = http.exchange(url, HttpMethod.POST, entity, Map.class);
+
+            if (response.getStatusCode().is2xxSuccessful()) {
+                System.out.println("✅ Wallet deduct successful");
+                return null;
+            } else {
+                return "Wallet error: " + response.getStatusCode();
             }
-            return "HTTP " + resp.getStatusCode() + " from wallet service";
-        } catch (HttpClientErrorException ex) {
-            System.err.println("[BookingService] deductFromWallet 4xx: "
-                    + ex.getStatusCode() + " body: " + ex.getResponseBodyAsString());
-            return "HTTP " + ex.getStatusCode() + ": " + ex.getResponseBodyAsString();
-        } catch (HttpServerErrorException ex) {
-            System.err.println("[BookingService] deductFromWallet 5xx: "
-                    + ex.getStatusCode() + " body: " + ex.getResponseBodyAsString());
-            return "HTTP " + ex.getStatusCode() + " from wallet service";
-        } catch (Exception ex) {
-            System.err.println("[BookingService] deductFromWallet connection error: " + ex.getMessage());
-            return "Connection error to wallet service: " + ex.getMessage();
+        } catch (Exception e) {
+            System.err.println("❌ Deduct failed: " + e.getMessage());
+            return "Connection error to wallet service: " + e.getMessage();
         }
     }
 
     private boolean markOfferBooked(Long offerId, Long customerId, Long bookingId) {
+        String url = offerServiceUrl + "/api/offers/" + offerId + "/complete";
+        System.out.println("[BookingService] Calling: POST " + url + " | bookingId=" + bookingId);
+
         try {
-            String url = offerServiceUrl + "/api/offers/" + offerId + "/complete";
-            System.out.println("[BookingService] Calling: PATCH " + url);
             Map<String, Object> body = new HashMap<>();
             body.put("customerId", customerId);
-            body.put("bookingId",  bookingId);
+            body.put("bookingId", bookingId);
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
-            HttpEntity<Map<String, Object>> req = new HttpEntity<>(body, headers);
+            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
 
-            ResponseEntity<Map> resp = http.exchange(url, HttpMethod.PATCH, req, Map.class);
-            return resp.getStatusCode().is2xxSuccessful();
-        } catch (Exception ex) {
-            System.err.println("[BookingService] markOfferBooked failed: " + ex.getMessage());
+            // Changed to POST to avoid PATCH issues
+            ResponseEntity<Map> response = http.exchange(url, HttpMethod.POST, entity, Map.class);
+
+            System.out.println("[BookingService] markOfferBooked response: " + response.getStatusCode());
+            return response.getStatusCode().is2xxSuccessful();
+
+        } catch (HttpClientErrorException e) {
+            System.err.println("[BookingService] markOfferBooked failed: " + e.getStatusCode()
+                    + " - " + e.getResponseBodyAsString());
+            return false;
+        } catch (Exception e) {
+            System.err.println("[BookingService] markOfferBooked error: " + e.getMessage());
             return false;
         }
     }
@@ -201,18 +205,19 @@ public class ReservationOrchestrator {
     private void rollbackWallet(Long customerId, Double amount) {
         try {
             String url = walletServiceUrl + "/wallet-service/api/wallet/" + customerId + "/rollback";
-            System.out.println("[BookingService] Calling: PATCH " + url + " (rollback)");
+            System.out.println("[BookingService] Calling: POST rollback → " + url);
+
             Map<String, Object> body = new HashMap<>();
             body.put("amount", amount);
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
-            HttpEntity<Map<String, Object>> req = new HttpEntity<>(body, headers);
+            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
 
-            http.exchange(url, HttpMethod.PATCH, req, Map.class);
-            System.out.println("[BookingService] Wallet rolled back for customerId=" + customerId);
-        } catch (Exception ex) {
-            System.err.println("[BookingService] Rollback failed: " + ex.getMessage());
+            http.exchange(url, HttpMethod.POST, entity, Map.class);
+            System.out.println("✅ Wallet rollback successful");
+        } catch (Exception e) {
+            System.err.println("⚠️ Wallet rollback failed: " + e.getMessage());
         }
     }
 

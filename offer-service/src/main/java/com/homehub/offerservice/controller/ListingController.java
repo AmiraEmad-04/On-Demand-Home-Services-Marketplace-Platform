@@ -150,9 +150,14 @@ public class ListingController {
      * PATCH /api/offers/{offerId}/complete — called by Booking Service after payment succeeds.
      * Body: { "customerId": 1, "bookingId": 5 }
      */
+    /**
+     * POST or PATCH /api/offers/{offerId}/complete — called by Booking Service after payment succeeds.
+     * Body: { "customerId": 1, "bookingId": 5 }
+     */
+    @PostMapping("/{offerId}/complete")
     @PatchMapping("/{offerId}/complete")
     public ResponseEntity<?> completeListing(@PathVariable Long offerId,
-                                              @RequestBody OfferDtos.CompleteListingRequest req) {
+                                             @RequestBody OfferDtos.CompleteListingRequest req) {
         if (req.customerId == null || req.bookingId == null) {
             return ResponseEntity.badRequest()
                     .body(new OfferDtos.ErrorBody("customerId and bookingId are required"));

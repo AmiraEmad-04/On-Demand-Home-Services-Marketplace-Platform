@@ -1,0 +1,15 @@
+com\homehub\bookingservice\messaging\ReservationEventPublisher.class
+com\homehub\bookingservice\repository\ReservationRepository.class
+com\homehub\bookingservice\dto\BookingDtos$OfferSnapshot.class
+com\homehub\bookingservice\config\BookingRabbitConfig.class
+com\homehub\bookingservice\service\ReservationOrchestrator.class
+com\homehub\bookingservice\entity\Reservation$ReservationStatus.class
+com\homehub\bookingservice\dto\BookingDtos$ReservationView.class
+com\homehub\bookingservice\service\ReservationOrchestrator$BookingResult.class
+com\homehub\bookingservice\entity\Reservation.class
+com\homehub\bookingservice\dto\BookingDtos$ErrorBody.class
+com\homehub\bookingservice\dto\BookingDtos$WalletSnapshot.class
+com\homehub\bookingservice\controller\ReservationController.class
+com\homehub\bookingservice\dto\BookingDtos$CreateReservationRequest.class
+com\homehub\bookingservice\dto\BookingDtos.class
+com\homehub\bookingservice\BookingServiceApplication.class

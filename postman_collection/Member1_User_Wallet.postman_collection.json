@@ -1,0 +1,443 @@
+{
+  "info": {
+    "_postman_id": "18e31439-02cf-4268-a19b-004307a93b80",
+    "name": "Member 1 — User & Wallet Service",
+    "description": "User Service (EJB/JBoss, port 8081) and Wallet Service (EJB/JBoss, port 8081)\n\nUser Service base URL: http://localhost:8081/user-service/api\nWallet Service base URL: http://localhost:8081/wallet-service/api",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "User Service",
+      "item": [
+        {
+          "name": "Register a Customer",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "http://localhost:8081/user-service/api/users/register",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8081",
+              "path": ["user-service", "api", "users", "register"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"customer_sara\",\n  \"password\": \"pass123\",\n  \"role\": \"CUSTOMER\",\n  \"initialBalance\": 500.0\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Register a new customer. Automatically creates a wallet with the given initialBalance."
+          },
+          "response": []
+        },
+        {
+          "name": "Register a Provider",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "http://localhost:8081/user-service/api/users/register",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8081",
+              "path": ["user-service", "api", "users", "register"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"plumber_ali\",\n  \"password\": \"pass123\",\n  \"role\": \"PROVIDER\",\n  \"profession\": \"Plumber\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Register a service provider (plumber, carpenter, etc.) with profession type."
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "http://localhost:8081/user-service/api/users/login",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8081",
+              "path": ["user-service", "api", "users", "login"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"customer_sara\",\n  \"password\": \"pass123\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Login with registered credentials."
+          },
+          "response": []
+        },
+        {
+          "name": "Get User Profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/user-service/api/users/1/profile",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8081",
+              "path": ["user-service", "api", "users", "1", "profile"]
+            },
+            "description": "Get profile of a user by ID. Change 1 to the actual userId."
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Users (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/user-service/api/users",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8081",
+              "path": ["user-service", "api", "users"]
+            },
+            "description": "Get all registered users. Used by Admin Service."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Categories (Catalog Cache - Singleton EJB)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/user-service/api/users/categories",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8081",
+              "path": ["user-service", "api", "users", "categories"]
+            },
+            "description": "Get all service categories. Uses @Singleton CatalogCacheBean."
+          },
+          "response": []
+        },
+        {
+          "name": "Add Category (Singleton EJB)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "http://localhost:8081/user-service/api/users/categories",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8081",
+              "path": ["user-service", "api", "users", "categories"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"category\": \"Gardening\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Add a new service category. Uses @Singleton CatalogCacheBean."
+          },
+          "response": []
+        },
+        {
+          "name": "Submit Service Request (Team-of-3)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "http://localhost:8081/user-service/api/users/requests",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8081",
+              "path": ["user-service", "api", "users", "requests"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customerId\": 1,\n  \"category\": \"Plumbing\",\n  \"maxPrice\": 150.0,\n  \"requiredDate\": \"2026-06-20\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Customer submits a service request. System will match to available offers. Team-of-3 feature."
+          },
+          "response": []
+        },
+        {
+          "name": "View Customer's Requests (Team-of-3)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/user-service/api/users/requests/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8081",
+              "path": ["user-service", "api", "users", "requests", "1"]
+            },
+            "description": "Get all service requests for a customer. Change 1 to customerId."
+          },
+          "response": []
+        },
+        {
+          "name": "View Pending Requests (Team-of-3)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/user-service/api/users/requests/pending",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8081",
+              "path": ["user-service", "api", "users", "requests", "pending"]
+            },
+            "description": "Get all unmatched service requests. Used internally by M2 to find requests to match."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Request Match (Team-of-3)",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "http://localhost:8081/user-service/api/users/requests/1/match",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8081",
+              "path": ["user-service", "api", "users", "requests", "1", "match"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"matchedOfferId\": 1\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Mark a service request as matched. Called by M2 when a match is found. Change 1 to requestId."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Wallet Service",
+      "item": [
+        {
+          "name": "Create Wallet",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "http://localhost:8081/wallet-service/api/wallet/1/create",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8081",
+              "path": ["wallet-service", "api", "wallet", "1", "create"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"initialBalance\": 200.0\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Create wallet for a user. Called automatically on customer registration. Change 1 to userId."
+          },
+          "response": []
+        },
+        {
+          "name": "Check Balance",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/wallet-service/api/wallet/1/balance",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8081",
+              "path": ["wallet-service", "api", "wallet", "1", "balance"]
+            },
+            "description": "Get current wallet balance for a user. Change 1 to userId."
+          },
+          "response": []
+        },
+        {
+          "name": "Top Up Wallet",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "http://localhost:8081/wallet-service/api/wallet/1/topup",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8081",
+              "path": ["wallet-service", "api", "wallet", "1", "topup"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 100.0\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Add funds to wallet. Change 1 to userId."
+          },
+          "response": []
+        },
+        {
+          "name": "Deduct from Wallet",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "http://localhost:8081/wallet-service/api/wallet/1/deduct",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8081",
+              "path": ["wallet-service", "api", "wallet", "1", "deduct"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 80.0\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Deduct amount from wallet. Returns 402 if insufficient balance. Called by Booking Service. Change 1 to userId."
+          },
+          "response": []
+        },
+        {
+          "name": "Rollback (Refund) Wallet",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "http://localhost:8081/wallet-service/api/wallet/1/rollback",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8081",
+              "path": ["wallet-service", "api", "wallet", "1", "rollback"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 80.0\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Refund amount back to wallet. Called by Booking Service on failure/rollback. Change 1 to userId."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Via API Gateway (port 8080)",
+      "item": [
+        {
+          "name": "Register Customer (Gateway)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "http://localhost:8080/users/register",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["users", "register"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"customer_sara\",\n  \"password\": \"pass123\",\n  \"role\": \"CUSTOMER\",\n  \"initialBalance\": 500.0\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Register Provider (Gateway)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "http://localhost:8080/users/register",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["users", "register"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"plumber_ali\",\n  \"password\": \"pass123\",\n  \"role\": \"PROVIDER\",\n  \"profession\": \"Plumber\"\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login (Gateway)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "http://localhost:8080/users/login",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["users", "login"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"customer_sara\",\n  \"password\": \"pass123\"\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Check Balance (Gateway)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/wallet/1/balance",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["wallet", "1", "balance"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Top Up (Gateway)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "http://localhost:8080/wallet/1/topup",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["wallet", "1", "topup"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 100.0\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "USER_SERVICE_URL",
+      "value": "http://localhost:8081/user-service/api",
+      "type": "string"
+    },
+    {
+      "key": "WALLET_SERVICE_URL",
+      "value": "http://localhost:8081/wallet-service/api",
+      "type": "string"
+    },
+    {
+      "key": "GATEWAY_URL",
+      "value": "http://localhost:8080",
+      "type": "string"
+    }
+  ]
+}
