@@ -1,0 +1,107 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+
+  cloud:
+    gateway:
+      # Global CORS — allows Postman and browser clients to call the gateway
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+
+      routes:
+
+        # ── User Service (JBoss WAR, port 8081) ──────────────────────────
+        # All /users/** requests → http://localhost:8081/user-service/api/users/**
+        - id: user-service
+          uri: http://localhost:8081
+          predicates:
+            - Path=/users/**
+          filters:
+            # Strip the first path segment (/users) and prepend the JBoss context path
+            - RewritePath=/users/(?<segment>.*), /user-service/api/users/${segment}
+
+        # ── Wallet Service (JBoss WAR, port 8082) ────────────────────────
+        # All /wallet/** requests → http://localhost:8082/wallet-service/api/wallet/**
+        - id: wallet-service
+          uri: http://localhost:8082
+          predicates:
+            - Path=/wallet/**
+          filters:
+            - RewritePath=/wallet/(?<segment>.*), /wallet-service/api/wallet/${segment}
+
+        # ── Offer Service (Spring Boot, port 8083) ───────────────────────
+        # All /offers/** requests → http://localhost:8083/api/offers/**
+        - id: offer-service
+          uri: http://localhost:8083
+          predicates:
+            - Path=/offers/**
+          filters:
+            - RewritePath=/offers/(?<segment>.*), /api/offers/${segment}
+
+        # Offer Service root path (GET /offers with no trailing segment)
+        - id: offer-service-root
+          uri: http://localhost:8083
+          predicates:
+            - Path=/offers
+          filters:
+            - RewritePath=/offers, /api/offers
+
+        # ── Booking Service (Spring Boot, port 8084) ─────────────────────
+        # All /bookings/** requests → http://localhost:8084/api/bookings/**
+        - id: booking-service
+          uri: http://localhost:8084
+          predicates:
+            - Path=/bookings/**
+          filters:
+            - RewritePath=/bookings/(?<segment>.*), /api/bookings/${segment}
+
+        # Booking Service root path
+        - id: booking-service-root
+          uri: http://localhost:8084
+          predicates:
+            - Path=/bookings
+          filters:
+            - RewritePath=/bookings, /api/bookings
+
+        # ── Admin Service (Spring Boot, port 8085) ───────────────────────
+        # All /admin/** requests → http://localhost:8085/api/admin/**
+        - id: admin-service
+          uri: http://localhost:8085
+          predicates:
+            - Path=/admin/**
+          filters:
+            - RewritePath=/admin/(?<segment>.*), /api/admin/${segment}
+
+        # ── Notification Service (Spring Boot, port 8086) ────────────────
+        # All /notifications/** requests → http://localhost:8086/api/notifications/**
+        - id: notification-service
+          uri: http://localhost:8086
+          predicates:
+            - Path=/notifications/**
+          filters:
+            - RewritePath=/notifications/(?<segment>.*), /api/notifications/${segment}
+
+        # Notification Service root path
+        - id: notification-service-root
+          uri: http://localhost:8086
+          predicates:
+            - Path=/notifications
+          filters:
+            - RewritePath=/notifications, /api/notifications
+
+# Actuator — expose health endpoint
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info
+  endpoint:
+    health:
+      show-details: always
