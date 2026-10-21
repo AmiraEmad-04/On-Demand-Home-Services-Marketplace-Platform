@@ -107,6 +107,4 @@ This is an academic project: passwords are stored as plain text, and token-based
 
 ## 📁 Repository Layout
 - `user-service/`, `wallet-service/`: my services
-- `<<ضيفي مكان باقي الخدمات أو أسماء البرانشات اللي فيها شغل Basmala وRaghad>>`
-
 Original team repository: <https://github.com/basmala352004/On-Demand-Home-Services-Marketplace-Platform>
